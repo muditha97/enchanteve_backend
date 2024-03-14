@@ -1,36 +1,44 @@
 import express from "express";
 import { Category } from "../models/category";
+import { Product } from "../models/product";
 
 const router = express.Router();
 
 router.post("/", async (req, res) => {
   try {
-    if (!req.body.name) {
+    if (!req.body.name || !req.body.price || !req.body.category) {
       return res.status(400).send({
         message: "Send required details",
       });
     }
 
-    const newCategory = {
+    const newProduct = {
       name: req.body.name,
+      price: req.body.price,
+      image: req.body.image,
+      description: req.body.description,
+      category: req.body.category,
+      availableColors: req.body.availableColors,
+      discount: req.body.discount,
     };
 
-    const category = await Category.create(newCategory);
+    const product = await Product.create(newProduct);
 
-    return res.status(201).send(category);
+    return res.status(201).send(product);
   } catch (error: any) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
   }
 });
 
-router.get("/", async (req, res) => {
+router.get("/:categoryId", async (req, res) => {
   try {
-    const categories = await Category.find({});
+    const { categoryId } = req.params;
+    const products = await Product.find({ category: categoryId });
 
     return res.status(200).json({
-      count: categories.length,
-      data: categories,
+      count: products.length,
+      data: products,
     });
   } catch (error: any) {
     console.log(error.message);
@@ -41,9 +49,9 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
-    const category = await Category.findById(id);
+    const product = await Product.findById(id);
 
-    return res.status(200).json(category);
+    return res.status(200).json(product);
   } catch (error: any) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
@@ -79,15 +87,15 @@ router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
 
-    const result = await Category.findByIdAndDelete(id);
+    const result = await Product.findByIdAndDelete(id);
 
     if (!result) {
       return res.status(404).json({
-        message: "Category not found",
+        message: "Product not found",
       });
     }
 
-    return res.status(200).json({ message: "Category deleted successfully" });
+    return res.status(200).json({ message: "Product deleted successfully" });
   } catch (error: any) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
