@@ -22,6 +22,14 @@ router.post("/", async (req, res) => {
     });
 
     const newOrder = {
+      id: req.body.id,
+      customerName: req.body.customerName,
+      customerPhone1: req.body.customerPhone1,
+      customerPhone2: req.body.customerPhone2,
+      address: req.body.address,
+      size: req.body.size,
+      district: req.body.district,
+      city: req.body.city,
       products: products,
       total: req.body.total,
     };
@@ -39,9 +47,39 @@ router.get("/", async (req, res) => {
   try {
     const orders = await Order.find({});
 
+    const ordersData = await Promise.all(
+      orders
+        .filter((order) => order.deletedAt === null) // Filter out orders where deletedAt is not null
+        .map(async (order) => {
+          return {
+            _id: order._id,
+            id: order.id,
+            customerName: order.customerName,
+            customerPhone1: order.customerPhone1,
+            customerPhone2: order.customerPhone2,
+            address: order.address,
+            size: order.size,
+            district: order.district,
+            city: order.city,
+            products: await Promise.all(
+              order.products.map(async (product) => {
+                return {
+                  product: await Product.findById(product.productId),
+                  quantity: product.quantity,
+                };
+              })
+            ),
+            total: order.total,
+            status: order.status,
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+          };
+        })
+    );
+
     return res.status(200).json({
-      count: orders.length,
-      data: orders,
+      count: ordersData.length,
+      data: ordersData,
     });
   } catch (error: any) {
     console.log(error.message);
