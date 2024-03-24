@@ -83,15 +83,15 @@ router.put("/:id", async (req, res) => {
 
     const { id } = req.params;
 
-    const result = await Category.findByIdAndUpdate(id, req.body);
+    const result = await Product.findByIdAndUpdate(id, req.body);
 
     if (!result) {
       return res.status(404).json({
-        message: "Category not found",
+        message: "Product not found",
       });
     }
 
-    return res.status(200).json({ message: "Category updated successfully" });
+    return res.status(200).json({ message: "Product updated successfully" });
   } catch (error: any) {
     console.log(error.message);
     res.status(500).send({ message: error.message });
