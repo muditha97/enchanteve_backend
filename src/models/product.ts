@@ -27,6 +27,10 @@ const productSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    availableSizes: {
+      type: [String],
+      default: [],
+    },
     materials: {
       type: [String],
       default: [],

@@ -31,9 +31,24 @@ router.post("/", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    const products = await Product.find({});
+
+    return res.status(200).json({
+      count: products.length,
+      data: products,
+    });
+  } catch (error: any) {
+    console.log(error.message);
+    res.status(500).send({ message: error.message });
+  }
+});
+
 router.get("/:categoryId", async (req, res) => {
   try {
     const { categoryId } = req.params;
+
     const products = await Product.find({ category: categoryId });
 
     return res.status(200).json({
@@ -86,6 +101,7 @@ router.put("/:id", async (req, res) => {
 router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
+    console.log("id: ", id);
 
     const result = await Product.findByIdAndDelete(id);
 
