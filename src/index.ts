@@ -5,6 +5,7 @@ require("dotenv").config();
 import productRoute from "./routes/product";
 import categoryRoute from "./routes/category";
 import orderRoute from "./routes/order";
+import locationRoute from "./routes/location";
 import cors from "cors";
 
 const app: Application = express();
@@ -17,6 +18,7 @@ app.use(cors());
 app.use("/category", categoryRoute);
 app.use("/product", productRoute);
 app.use("/order", orderRoute);
+app.use("/location", locationRoute);
 
 mongoose
   .connect("mongodb://127.0.0.1:27017/enchanteve")
